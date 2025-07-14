@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Recuperación en Hotel</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .falla {
+      background: #f4f4f4;
+      margin: 10px 0;
+      padding: 15px;
+      border-left: 4px solid #007bff;
+    }
+    .resultados-section {
+      margin-top: 30px;
+      background: #e9f7ef;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    .metrica {
+      display: inline-block;
+      width: 30%;
+      margin: 5px;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+    }
+    .error {
+      color: red;
+    }
+    footer {
+      margin-top: 30px;
+      font-size: 0.8em;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Simulador de Recuperación en Hotel</h1>
+  <p id="fecha-actualizacion"></p>
+  
+  <div id="loading" class="loading">Cargando datos...</div>
+  
+  <div id="fallas">
+    <!-- Las fallas se cargarán aquí -->
+  </div>
+
+  <div id="resultados" class="resultados-section">
+    <!-- Los resultados de recuperación se mostrarán aquí -->
+  </div>
+  
+  <div id="notas"></div>
+  
+  <footer>
+    <p>© 2023 Simulador Hotelero - Todos los derechos reservados</p>
+  </footer>
+
+$(document).ready(function() {
+  // Mostrar estado de carga
+  $("#fallas, #resultados, #notas").hide();
+  
+  // Cargar el JSON con los datos
+  $.ajax({
+    url: "/simulacion_datos.json"
+    dataType: "json",
+    timeout: 5000, // 5 segundos de timeout
+    success: function(data) {
+      // Ocultar carga y mostrar contenido
+      $("#loading").hide();
+      $("#fallas, #resultados, #notas").fadeIn();
+      
+      // Mostrar fecha de actualización
+      if(data.ultima_actualizacion) {
+        $("#fecha-actualizacion").text(`Última actualización: ${data.ultima_actualizacion}`);
+      }
+      
+      // Mostrar las fallas
+      $("#fallas").html("<h2>Tipos de Fallas</h2>");
+      data.fallas.forEach(function(falla) {
+        let fallaHtml = `<div class="falla" id="falla-${falla.id}">
+                          <h3>${falla.tipo}</h3>
+                          <p>${falla.descripcion}</p>
+                          <p><strong>Frecuencia:</strong> ${falla.frecuencia || 'No especificada'}</p>
+                          <div class="progreso">
+                            <p><strong>Recuperación Parcial:</strong> 
+                              <progress value="${falla.recuperacion_parcial}" max="100"></progress> ${falla.recuperacion_parcial}%
+                            </p>
+                            <p><strong>Recuperación Completa:</strong> 
+                              <progress value="${falla.recuperacion_completa}" max="100"></progress> ${falla.recuperacion_completa}%
+                            </p>
+                          </div>
+                        </div>`;
+        $("#fallas").append(fallaHtml);
+      });
+
+      // Mostrar resultados
+      let resultadosHtml = `<h2>Resultados de Recuperación</h2>
+                          <div>
+                            <h3>Recuperación Parcial</h3>
+                            <div class="metrica"><strong>RevPAR:</strong> ${data.resultados.recuperacion_parcial.revpar}</div>
+                            <div class="metrica"><strong>ADR:</strong> ${data.resultados.recuperacion_parcial.adr}</div>
+                            <div class="metrica"><strong>Ocupación:</strong> ${data.resultados.recuperacion_parcial.ocupacion}</div>
+                          </div>
+                          <div>
+                            <h3>Recuperación Completa</h3>
+                            <div class="metrica"><strong>RevPAR:</strong> ${data.resultados.recuperacion_completa.revpar}</div>
+                            <div class="metrica"><strong>ADR:</strong> ${data.resultados.recuperacion_completa.adr}</div>
+                            <div class="metrica"><strong>Ocupación:</strong> ${data.resultados.recuperacion_completa.ocupacion}</div>
+                          </div>`;
+      $("#resultados").html(resultadosHtml);
+      
+      // Mostrar notas
+      if(data.notas) {
+        $("#notas").html(`<p><em>Nota:</em> ${data.notas}</p>`);
+      }
+    },
+    error: function(xhr, status, error) {
+      $("#loading").html(`<p class="error">Error: ${status} - ${error || "No se pudo cargar el archivo JSON"}</p>`);
+      console.error("Error en AJAX:", status, error);
+      console.log("Respuesta del servidor:", xhr.responseText);
+    }
+  });
+});
+
+  </script>
+</body>
+</html>

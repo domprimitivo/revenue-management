@@ -1,0 +1,42 @@
+{
+  "ultima_actualizacion": "2023-11-15",
+  "fallas": [
+    {
+      "id": 1,
+      "tipo": "Sobrecarga Operativa",
+      "descripcion": "Alta demanda debido a un evento local inesperado.",
+      "recuperacion_parcial": 55,
+      "recuperacion_completa": 85,
+      "frecuencia": "Ocasional"
+    },
+    {
+      "id": 2,
+      "tipo": "Fallo de Capacidad",
+      "descripcion": "Reducción de habitaciones disponibles debido a mantenimiento no planificado.",
+      "recuperacion_parcial": 45,
+      "recuperacion_completa": 80
+      "frecuencia": "Rara"
+    },
+    {
+      "id": 3,
+      "tipo": "Baja Demanda",
+      "descripcion": "Caída en las reservas durante la baja temporada.",
+      "recuperacion_parcial": 50
+      "recuperacion_completa": 75,
+      "frecuencia": "Estacional"
+    }
+  ],
+  "resultados": {
+    "recuperacion_parcial": {
+      "revpar": "50%",
+      "adr": "45%",
+      "ocupacion": "30%"
+    },
+    "recuperacion_completa": {
+      "revpar": "85%",
+      "adr": "85%",
+      "ocupacion": "75%"
+    }
+  },
+  "notas": "Los porcentajes de recuperación son estimaciones basadas en datos históricos."
+}
